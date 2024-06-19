@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/bookings")
-
+//fadsfasdf
 public class BookingController {
 
     private final IBookingService bookingService;
