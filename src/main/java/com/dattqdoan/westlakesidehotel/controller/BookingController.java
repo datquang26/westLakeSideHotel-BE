@@ -39,12 +39,12 @@ public class BookingController {
     }
 
     @GetMapping("/confirmation/{confirmationCode}")
-    public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
-        try {
+    public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode){
+        try{
             BookedRoom booking = bookingService.findByBookingConfirmationCode(confirmationCode);
             BookingResponse bookingResponse = getBookingResponse(booking);
             return ResponseEntity.ok(bookingResponse);
-        } catch (ResourceNotFoundException ex) {
+        }catch (ResourceNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
@@ -55,7 +55,7 @@ public class BookingController {
         try {
             String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
             return ResponseEntity.ok(
-                    "Room booked successfully, your booking confirmation code is:"+confirmationCode);
+                    "Room booked successfully, your booking confirmation code is:" +confirmationCode);
         } catch (InvalidBookingRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -1,6 +1,7 @@
 package com.dattqdoan.westlakesidehotel.service;
 
 import com.dattqdoan.westlakesidehotel.exception.InvalidBookingRequestException;
+import com.dattqdoan.westlakesidehotel.exception.ResourceNotFoundException;
 import com.dattqdoan.westlakesidehotel.model.BookedRoom;
 import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.repository.BookingRepository;
@@ -53,7 +54,8 @@ public class BookingService implements IBookingService{
 
     @Override
     public BookedRoom findByBookingConfirmationCode(String confirmationCode) {
-        return bookingRepository.findByBookingConfirmationCode(confirmationCode);
+        return bookingRepository.findByBookingConfirmationCode(confirmationCode)
+                .orElseThrow(()->new ResourceNotFoundException("No booking found with booking code:"+confirmationCode));
     }
 
 
