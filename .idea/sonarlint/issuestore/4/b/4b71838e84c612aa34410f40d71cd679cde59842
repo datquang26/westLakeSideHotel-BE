@@ -1,6 +1,6 @@
 
 
-java:S1854`"<Remove this useless assignment to local variable "bookings".(‹î‚Ó8ª¬¤…ˆ2J$50c7a64b-538e-4786-a4fa-b7b969ca1045
+java:S1854a"<Remove this useless assignment to local variable "bookings".(‹î‚Ó8ª¬¤…ˆ2J$e6bd2a23-f892-4f30-9bf3-d7339d2ec9a4
 p
-java:S1481`"-Remove this unused "bookings" local variable.(‹î‚Ó8­¬¤…ˆ2J$6df5f8fa-9c57-4a3c-817e-5604a6384c1d
-~	java:S125e"<This block of commented-out lines of code should be removed.(’Í¤8°¬¤…ˆ2J$6627e268-b2ec-4e5b-964b-11f1872a9cfa
+java:S1481a"-Remove this unused "bookings" local variable.(‹î‚Ó8­¬¤…ˆ2J$b9ad8323-f56c-4cbf-a69f-8476aa27d4dc
+~	java:S125f"<This block of commented-out lines of code should be removed.(’Í¤8°¬¤…ˆ2J$7830e09c-646d-4544-8bba-7a1b5546e983
