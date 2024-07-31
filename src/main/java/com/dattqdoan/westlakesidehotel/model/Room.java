@@ -3,7 +3,6 @@ package com.dattqdoan.westlakesidehotel.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -15,14 +14,17 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String roomType;
+
     private BigDecimal roomPrice;
+
     private boolean isBooked = false;
+
     @Lob
     private Blob photo;
 

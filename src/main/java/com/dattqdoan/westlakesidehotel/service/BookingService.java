@@ -18,7 +18,6 @@ public class BookingService implements IBookingService{
     private final IRoomService roomService;
     @Override
     public List<BookedRoom> getAllBookingByRoomId(Long roomId) {
-
         return bookingRepository.findByRoomId(roomId);
     }
 
@@ -28,8 +27,12 @@ public class BookingService implements IBookingService{
     }
 
     @Override
-    public void cancelBooking(Long bookingId) {
+    public List<BookedRoom> getBookingsByUserEmail(String email) {
+        return bookingRepository.findByGuestEmail(email);
+    }
 
+    @Override
+    public void cancelBooking(Long bookingId) {
         bookingRepository.deleteById(bookingId);
     }
 
@@ -45,7 +48,7 @@ public class BookingService implements IBookingService{
             room.addBooking(bookingRequest);
             bookingRepository.save(bookingRequest);
         }else{
-            throw  new InvalidBookingRequestException("Sorry, This room is not available for the selected dates;");
+            throw new InvalidBookingRequestException("Sorry, This room is not available for the selected dates;");
         }
         return bookingRequest.getBookingConfirmationCode();
     }

@@ -9,12 +9,8 @@ s
 Csrc/main/java/com/dattqdoan/westlakesidehotel/model/BookedRoom.java,4\0\4041edcbf9f7787094c8a9d900ee807a33b7c971
 |
 Lsrc/main/java/com/dattqdoan/westlakesidehotel/controller/RoomController.java,4\b\4b71838e84c612aa34410f40d71cd679cde59842
-‚
-Rsrc/main/java/com/dattqdoan/westlakesidehotel/controller/BookedRoomController.java,7\9\79f8d09f8c431de2c04e93233e309d9a5fc109e9
 |
 Lsrc/main/java/com/dattqdoan/westlakesidehotel/repository/RoomRepository.java,2\4\24dfb8d03523924095564fb0530c5c9d0a7fc5f3
-‚
-Rsrc/main/java/com/dattqdoan/westlakesidehotel/repository/BookedRoomRepository.java,2\b\2bed0a0ba65e645cfbb4c574953d9c61d63e1442
 w
 Gsrc/main/java/com/dattqdoan/westlakesidehotel/service/IRoomService.java,d\4\d4bc86140b97eefa63349ab90e3c3e2d183a938a
 }

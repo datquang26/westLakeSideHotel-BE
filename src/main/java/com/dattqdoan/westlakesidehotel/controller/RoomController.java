@@ -4,6 +4,7 @@ import com.dattqdoan.westlakesidehotel.exception.PhotoRetrievalException;
 import com.dattqdoan.westlakesidehotel.exception.ResourceNotFoundException;
 import com.dattqdoan.westlakesidehotel.model.BookedRoom;
 import com.dattqdoan.westlakesidehotel.model.Room;
+import com.dattqdoan.westlakesidehotel.response.BookingResponse;
 import com.dattqdoan.westlakesidehotel.response.RoomResponse;
 import com.dattqdoan.westlakesidehotel.service.BookingService;
 import com.dattqdoan.westlakesidehotel.service.IRoomService;
@@ -34,7 +35,6 @@ public class RoomController {
 
     private final IRoomService roomService;
     private final BookingService bookingService;
-
 
     @PostMapping("/add/new-room")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -95,11 +95,11 @@ public class RoomController {
 
     private RoomResponse getRoomResponse(Room room) {
         List<BookedRoom> bookings = getAllBookingsByRoomId(room.getId());
-//        List<BookingResponse> bookingInfo = bookings
-//                .stream()
-//                .map(booking -> new BookingResponse(booking.getBookingId(),
-//                        booking.getCheckInDate(),
-//                        booking.getCheckOutDate(), booking.getBookingConfirmationCode())).toList();
+        List<BookingResponse> bookingInfo = bookings
+                .stream()
+                .map(booking -> new BookingResponse(booking.getBookingId(),
+                        booking.getCheckInDate(),
+                        booking.getCheckOutDate(), booking.getBookingConfirmationCode())).toList();
         byte[] photoBytes = null;
         Blob photoBlob = room.getPhoto();
         if (photoBlob != null) {
@@ -111,7 +111,7 @@ public class RoomController {
         }
         return new RoomResponse(room.getId(),
                 room.getRoomType(), room.getRoomPrice(),
-                room.isBooked(), photoBytes);
+                room.isBooked(), photoBytes, bookingInfo);
     }
 
     private List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
@@ -121,7 +121,7 @@ public class RoomController {
     @DeleteMapping("/delete/room/{roomId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {
-        roomService.deteleRoom(roomId);
+        roomService.deleteRoom(roomId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -138,7 +138,6 @@ public class RoomController {
        theRoom.setPhoto(photoBlob);
        RoomResponse roomResponse = getRoomResponse(theRoom);
        return ResponseEntity.ok(roomResponse);
-
 
     }
 

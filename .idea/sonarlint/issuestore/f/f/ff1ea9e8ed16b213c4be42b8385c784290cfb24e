@@ -1,7 +1,7 @@
 
 “
-java:S3655E"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(Ïòé8»Ü¿Ü‡2J$8ad27fbe-79c4-4e2c-991b-3cb509c41ddc
+java:S3655P"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(Ïòé8»Ü¿Ü‡2J$5f4cb036-e8cc-4cfd-8c97-c3ca7d4f07c0
 i
-java:S1452)"&Remove usage of generic wildcard type.(Õ´˜Ç8ÈÜ¿Ü‡2J$b3546ed4-18c6-40a0-8966-80b4179fb5da
+java:S1452*"&Remove usage of generic wildcard type.(Õ´˜Ç8ÈÜ¿Ü‡2J$0db69c2b-a809-409e-a3fc-b015f80d0447
 n
-java:S14524"&Remove usage of generic wildcard type.(èË¦Úøÿÿÿÿ8ÌÜ¿Ü‡2J$96745690-dc92-4cc4-81d6-5af9a98c129f
+java:S14525"&Remove usage of generic wildcard type.(èË¦Úøÿÿÿÿ8ÌÜ¿Ü‡2J$e3befe1b-228e-4f85-a9f8-1beadab60a02

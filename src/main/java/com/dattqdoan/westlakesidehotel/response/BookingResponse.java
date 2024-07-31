@@ -1,6 +1,5 @@
 package com.dattqdoan.westlakesidehotel.response;
 
-import com.dattqdoan.westlakesidehotel.model.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

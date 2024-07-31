@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 

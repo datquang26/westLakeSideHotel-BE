@@ -29,10 +29,10 @@ public class JwtUtils {
         HotelUserDetails userPrincipal = (HotelUserDetails) authentication.getPrincipal();
         List<String> roles = userPrincipal.getAuthorities()
                 .stream()
-                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+                .map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .claim("role", roles)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime()+jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256).compact();
