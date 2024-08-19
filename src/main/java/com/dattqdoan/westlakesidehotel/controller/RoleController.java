@@ -3,7 +3,7 @@ package com.dattqdoan.westlakesidehotel.controller;
 import com.dattqdoan.westlakesidehotel.exception.RoleAlreadyExistException;
 import com.dattqdoan.westlakesidehotel.model.Role;
 import com.dattqdoan.westlakesidehotel.model.User;
-import com.dattqdoan.westlakesidehotel.service.IRoleService;
+import com.dattqdoan.westlakesidehotel.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.FOUND;
 @RequestMapping("/roles")
 @RequiredArgsConstructor
 public class RoleController {
-    private final IRoleService roleService;
+    private RoleService roleService;
 
     @GetMapping("/all-roles")
     public ResponseEntity<List<Role>> getAllRoles(){

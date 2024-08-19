@@ -6,8 +6,9 @@ import com.dattqdoan.westlakesidehotel.model.BookedRoom;
 import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.response.BookingResponse;
 import com.dattqdoan.westlakesidehotel.response.RoomResponse;
-import com.dattqdoan.westlakesidehotel.service.IBookingService;
-import com.dattqdoan.westlakesidehotel.service.IRoomService;
+import com.dattqdoan.westlakesidehotel.service.BookingService;
+import com.dattqdoan.westlakesidehotel.service.RoomService;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,10 @@ import java.util.List;
 @RequestMapping("/bookings")
 public class BookingController {
 
-    private final IBookingService bookingService;
-    private final IRoomService roomService;
+    @Resource
+    private final BookingService bookingService;
+    @Resource
+    private final RoomService roomService;
 
     @GetMapping("/all-bookings")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

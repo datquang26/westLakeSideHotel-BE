@@ -1,20 +1,20 @@
 package com.dattqdoan.westlakesidehotel.controller;
 
 import com.dattqdoan.westlakesidehotel.exception.UserAlreadyExistsException;
-import com.dattqdoan.westlakesidehotel.model.Role;
 import com.dattqdoan.westlakesidehotel.model.User;
 import com.dattqdoan.westlakesidehotel.request.LoginRequest;
 import com.dattqdoan.westlakesidehotel.response.JwtResponse;
 import com.dattqdoan.westlakesidehotel.security.jwt.JwtUtils;
 import com.dattqdoan.westlakesidehotel.security.user.HotelUserDetails;
-import com.dattqdoan.westlakesidehotel.service.IUserService;
+import com.dattqdoan.westlakesidehotel.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +23,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final IUserService userService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    @Resource
+    private UserService userService;
+    @Resource
+    private AuthenticationManager authenticationManager;
+    @Resource
+    private JwtUtils jwtUtils;
     @PostMapping("/register-user")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try{

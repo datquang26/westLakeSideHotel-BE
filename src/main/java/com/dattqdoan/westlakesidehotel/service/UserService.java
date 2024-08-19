@@ -5,6 +5,7 @@ import com.dattqdoan.westlakesidehotel.model.Role;
 import com.dattqdoan.westlakesidehotel.model.User;
 import com.dattqdoan.westlakesidehotel.repository.RoleRepository;
 import com.dattqdoan.westlakesidehotel.repository.UserRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,12 +16,14 @@ import java.util.Collections;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+public class UserService {
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private RoleRepository roleRepository;
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
-    @Override
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())){
             throw new UserAlreadyExistsException(user.getEmail() + " already exists");
@@ -32,13 +35,11 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    @Override
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
     @Transactional
-    @Override
     public void deleteUser(String email) {
             User theUser = getUser(email);
             if(theUser != null) {
@@ -46,7 +47,6 @@ public class UserService implements IUserService {
             }
     }
 
-    @Override
     public User getUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

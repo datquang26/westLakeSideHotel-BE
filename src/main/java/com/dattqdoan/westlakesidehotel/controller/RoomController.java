@@ -7,7 +7,8 @@ import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.response.BookingResponse;
 import com.dattqdoan.westlakesidehotel.response.RoomResponse;
 import com.dattqdoan.westlakesidehotel.service.BookingService;
-import com.dattqdoan.westlakesidehotel.service.IRoomService;
+import com.dattqdoan.westlakesidehotel.service.RoomService;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,12 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rooms")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class RoomController {
-
-    private final IRoomService roomService;
-    private final BookingService bookingService;
+    @Resource
+    private RoomService roomService;
+    @Resource
+    private BookingService bookingService;
 
     @PostMapping("/add/new-room")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -86,6 +88,8 @@ public class RoomController {
         Blob photoBlob = photoBytes != null && photoBytes.length >0 ? new SerialBlob(photoBytes): null;
         Room theRoom = roomService.updateRoom(roomId, roomType, roomPrice, photoBytes);
         theRoom.setPhoto(photoBlob);
+        theRoom.setRoomType(roomType);
+        theRoom.setRoomPrice(roomPrice);
         RoomResponse roomResponse = getRoomResponse(theRoom);
         return ResponseEntity.ok(roomResponse);
     }

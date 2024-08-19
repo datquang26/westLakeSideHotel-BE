@@ -4,6 +4,7 @@ import com.dattqdoan.westlakesidehotel.exception.InternalServerException;
 import com.dattqdoan.westlakesidehotel.exception.ResourceNotFoundException;
 import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.repository.RoomRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,10 +20,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class RoomService implements IRoomService {
+public class RoomService   {
+    @Resource
+    private RoomRepository roomRepository;
 
-    private final RoomRepository roomRepository;
-    @Override
     public Room addNewRoom(MultipartFile file, String roomType,
                            BigDecimal roomPrice)
             throws SQLException, IOException {
@@ -37,17 +38,14 @@ public class RoomService implements IRoomService {
         return roomRepository.save(room);
     }
 
-    @Override
     public List<String> getAllRoomTypes() {
         return roomRepository.findDistinctRoomTypes();
     }
 
-    @Override
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
     }
 
-    @Override
     public byte[] getRoomPhotoByRoomId(Long roomId) throws SQLException {
         Optional<Room> theRoom = roomRepository.findById(roomId);
         if (theRoom.isEmpty()) {
@@ -60,7 +58,6 @@ public class RoomService implements IRoomService {
         return null;
     }
 
-    @Override
     public void deleteRoom(Long roomId) {
         Optional<Room> theRoom = roomRepository.findById(roomId);
         if (theRoom.isPresent()) {
@@ -68,7 +65,6 @@ public class RoomService implements IRoomService {
         }
     }
 
-    @Override
     public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes) {
         Room room = roomRepository.findById(roomId).get();
         if (roomType != null) room.setRoomType(roomType);
@@ -83,12 +79,10 @@ public class RoomService implements IRoomService {
         return roomRepository.save(room);
     }
 
-    @Override
     public Optional<Room> getRoomById(Long roomId) {
         return Optional.of(roomRepository.findById(roomId).get());
     }
 
-    @Override
     public List<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, String roomType) {
         return roomRepository.findAvailableRoomsByDatesAndType(checkInDate, checkOutDate, roomType);
     }

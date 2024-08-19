@@ -14,16 +14,14 @@ import java.util.List;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
-public class RoleService implements IRoleService {
+public class RoleService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
-    @Override
     public List<Role> getRoles() {
         return roleRepository.findAll();
     }
 
-    @Override
     public Role createRole(Role theRole) {
         String roleName = "ROLE_"+theRole.getName().toUpperCase();
         Role role = new Role(roleName);
@@ -33,18 +31,15 @@ public class RoleService implements IRoleService {
         return roleRepository.save(role);
     }
 
-    @Override
     public void deleteRole(Long roleId) {
         this.removeAllUsersFromRole(roleId);
         roleRepository.deleteById(roleId);
     }
 
-    @Override
     public Role findByName(String name) {
         return roleRepository.findByName(name).get();
     }
 
-    @Override
     public User removeUserFromRole(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Role>  role = roleRepository.findById(roleId);
@@ -56,7 +51,6 @@ public class RoleService implements IRoleService {
         throw new UsernameNotFoundException("User not found");
     }
 
-    @Override
     public User assignRoleToUser(Long userId, Long roleId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Role>  role = roleRepository.findById(roleId);
@@ -71,7 +65,6 @@ public class RoleService implements IRoleService {
         return user.get();
     }
 
-    @Override
     public Role removeAllUsersFromRole(Long roleId) {
         Optional<Role> role = roleRepository.findById(roleId);
         role.ifPresent(Role::removeAllUsersFromRole);

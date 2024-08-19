@@ -1,7 +1,7 @@
 package com.dattqdoan.westlakesidehotel.controller;
 
 import com.dattqdoan.westlakesidehotel.model.User;
-import com.dattqdoan.westlakesidehotel.service.IUserService;
+import com.dattqdoan.westlakesidehotel.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final IUserService userService;
+    private UserService userService;
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<User>> getUsers() {

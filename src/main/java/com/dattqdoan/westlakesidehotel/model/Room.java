@@ -8,6 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
@@ -30,6 +31,25 @@ public class Room {
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BookedRoom> bookings;
+
+    @Column(name= "description")
+    private String description;
+
+    @Column(name= "status")
+    private String status;
+
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by", length = 40)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 40)
+    private String updatedBy;
 
     public Room() {
         this.bookings = new ArrayList<>();

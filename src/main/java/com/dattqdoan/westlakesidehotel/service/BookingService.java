@@ -5,6 +5,7 @@ import com.dattqdoan.westlakesidehotel.exception.ResourceNotFoundException;
 import com.dattqdoan.westlakesidehotel.model.BookedRoom;
 import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.repository.BookingRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,31 +13,28 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BookingService implements IBookingService{
+public class BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final IRoomService roomService;
-    @Override
+    @Resource
+    private BookingRepository bookingRepository;
+    @Resource
+    private RoomService roomService;
     public List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
         return bookingRepository.findByRoomId(roomId);
     }
 
-    @Override
     public List<BookedRoom> getAllBookings() {
         return bookingRepository.findAll();
     }
 
-    @Override
     public List<BookedRoom> getBookingsByUserEmail(String email) {
         return bookingRepository.findByGuestEmail(email);
     }
 
-    @Override
     public void cancelBooking(Long bookingId) {
         bookingRepository.deleteById(bookingId);
     }
 
-    @Override
     public String saveBooking(Long roomId, BookedRoom bookingRequest) {
         if (bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())){
             throw new InvalidBookingRequestException("Check-in date must come before check-out date");
@@ -53,9 +51,6 @@ public class BookingService implements IBookingService{
         return bookingRequest.getBookingConfirmationCode();
     }
 
-
-
-    @Override
     public BookedRoom findByBookingConfirmationCode(String confirmationCode) {
         return bookingRepository.findByBookingConfirmationCode(confirmationCode)
                 .orElseThrow(()->new ResourceNotFoundException("No booking found with booking code:"+confirmationCode));

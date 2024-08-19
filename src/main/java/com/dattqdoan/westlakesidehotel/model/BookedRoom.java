@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,9 +44,33 @@ public class BookedRoom {
     @Column(name = "confirmation_Code")
     private String bookingConfirmationCode;
 
+    @Column(name= "description")
+    private String description;
+
+    @Column(name= "total_price")
+    private Float totalPrice;
+
+    @Column(name= "status")
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by", length = 40)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 40)
+    private String updatedBy;
+
+    @OneToMany(mappedBy = "bookedRoom")
+    private List<PaymentEntity> payments;
 
     public void calculateTotalNumberGuest() {
         this.totalNumOfGuest = this.NumOfAdults + NumOfChildren;
