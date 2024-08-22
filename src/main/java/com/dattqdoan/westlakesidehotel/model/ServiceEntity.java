@@ -42,4 +42,9 @@ public class ServiceEntity {
     @Column(name = "updated_by", length = 40)
     private String updatedBy;
 
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
 }

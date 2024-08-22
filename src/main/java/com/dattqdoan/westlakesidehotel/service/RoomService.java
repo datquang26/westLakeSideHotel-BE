@@ -23,20 +23,58 @@ import java.util.Optional;
 public class RoomService   {
     @Resource
     private RoomRepository roomRepository;
+    @Resource
+    private FileStorageService fileStorageService;
 
-    public Room addNewRoom(MultipartFile file, String roomType,
-                           BigDecimal roomPrice)
-            throws SQLException, IOException {
-        Room room = new Room();
-        room.setRoomType(roomType);
-        room.setRoomPrice(roomPrice);
-        if (!file.isEmpty()) {
-            byte[] photoByte = file.getBytes();
-            Blob photoBlob = new SerialBlob(photoByte);
-            room.setPhoto(photoBlob);
+//    public Room addNewRoom(MultipartFile file, String roomType,
+//                           BigDecimal roomPrice, String username)
+//            throws SQLException, IOException {
+//        Room room = new Room();
+//        room.setRoomType(roomType);
+//        room.setRoomPrice(roomPrice);
+//        if (!file.isEmpty()) {
+//            byte[] photoByte = file.getBytes();
+//            Blob photoBlob = new SerialBlob(photoByte);
+//            room.setPhoto(photoBlob);
+//        }
+//        return roomRepository.save(room);
+//    }
+public Room addNewRoom(MultipartFile file, String roomType,
+                       BigDecimal roomPrice, String createdBy, String description, String status)
+        throws SQLException, IOException {
+    Room room = new Room();
+    room.setRoomType(roomType);
+    room.setRoomPrice(roomPrice);
+    room.setCreatedBy(createdBy);
+    room.setUpdatedBy(createdBy);
+    room.setDescription(description);
+    room.setStatus(status);
+
+    if (!file.isEmpty()) {
+        byte[] photoByte = file.getBytes();
+        Blob photoBlob = new SerialBlob(photoByte);
+        room.setPhoto(photoBlob);
+    }
+    return roomRepository.save(room);
+}
+
+    public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes, String updatedBy, String description, String status) {
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        if (roomType != null) room.setRoomType(roomType);
+        if (roomPrice != null) room.setRoomPrice(roomPrice);
+        if (photoBytes != null && photoBytes.length > 0) {
+            try {
+                room.setPhoto(new SerialBlob(photoBytes));
+            } catch (SQLException ex) {
+                throw new InternalServerException("Error updating room");
+            }
         }
+        room.setUpdatedBy(updatedBy);
+        if (description != null) room.setDescription(description);
+        if (status != null) room.setStatus(status);
         return roomRepository.save(room);
     }
+
 
     public List<String> getAllRoomTypes() {
         return roomRepository.findDistinctRoomTypes();
@@ -65,19 +103,19 @@ public class RoomService   {
         }
     }
 
-    public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes) {
-        Room room = roomRepository.findById(roomId).get();
-        if (roomType != null) room.setRoomType(roomType);
-        if (roomPrice != null) room.setRoomPrice(roomPrice);
-        if (photoBytes != null && photoBytes.length > 0) {
-            try {
-                room.setPhoto(new SerialBlob(photoBytes));
-            } catch (SQLException ex) {
-                throw new InternalServerException("Error updating room");
-            }
-        }
-        return roomRepository.save(room);
-    }
+//    public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes, String username) {
+//        Room room = roomRepository.findById(roomId).get();
+//        if (roomType != null) room.setRoomType(roomType);
+//        if (roomPrice != null) room.setRoomPrice(roomPrice);
+//        if (photoBytes != null && photoBytes.length > 0) {
+//            try {
+//                room.setPhoto(new SerialBlob(photoBytes));
+//            } catch (SQLException ex) {
+//                throw new InternalServerException("Error updating room");
+//            }
+//        }
+//        return roomRepository.save(room);
+//    }
 
     public Optional<Room> getRoomById(Long roomId) {
         return Optional.of(roomRepository.findById(roomId).get());

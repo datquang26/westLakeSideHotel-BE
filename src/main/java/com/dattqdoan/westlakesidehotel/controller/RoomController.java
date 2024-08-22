@@ -7,6 +7,7 @@ import com.dattqdoan.westlakesidehotel.model.Room;
 import com.dattqdoan.westlakesidehotel.response.BookingResponse;
 import com.dattqdoan.westlakesidehotel.response.RoomResponse;
 import com.dattqdoan.westlakesidehotel.service.BookingService;
+import com.dattqdoan.westlakesidehotel.service.FileStorageService;
 import com.dattqdoan.westlakesidehotel.service.RoomService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
@@ -38,17 +41,59 @@ public class RoomController {
     @Resource
     private BookingService bookingService;
 
+//    @PostMapping("/add/new-room")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    public ResponseEntity<RoomResponse> addNewRoom(
+//            @RequestParam("photo") MultipartFile photo,
+//            @RequestParam("roomType") String roomType,
+//            @RequestParam("roomPrice") BigDecimal roomPrice) throws SQLException, IOException {
+//        Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice);
+//        RoomResponse response = new RoomResponse(savedRoom.getId(), savedRoom.getRoomType(),
+//                savedRoom.getRoomPrice());
+//        return ResponseEntity.ok(response);
+//    }
+
     @PostMapping("/add/new-room")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> addNewRoom(
             @RequestParam("photo") MultipartFile photo,
             @RequestParam("roomType") String roomType,
-            @RequestParam("roomPrice") BigDecimal roomPrice) throws SQLException, IOException {
-        Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice);
+            @RequestParam("roomPrice") BigDecimal roomPrice,
+            @RequestParam("description") String description,  // Đảm bảo `description` nằm ở vị trí này
+            @RequestParam("status") String status)  throws SQLException, IOException {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice, username, description, status);
         RoomResponse response = new RoomResponse(savedRoom.getId(), savedRoom.getRoomType(),
-                savedRoom.getRoomPrice());
+                savedRoom.getRoomPrice(), savedRoom.isBooked(),
+                savedRoom.getPhoto() != null ? savedRoom.getPhoto().getBytes(1, (int) savedRoom.getPhoto().length()) : null,
+                null, savedRoom.getCreatedBy(), savedRoom.getUpdatedBy(), savedRoom.getDescription(), savedRoom.getStatus());
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/update/{roomId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId,
+                                                   @RequestParam(required = false)  String roomType,
+                                                   @RequestParam(required = false) BigDecimal roomPrice,
+                                                   @RequestParam(required = false) MultipartFile photo,
+                                                   @RequestParam(required = false) String description,
+                                                   @RequestParam(required = false) String status) throws SQLException, IOException {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        byte[] photoBytes = photo != null && !photo.isEmpty() ?
+                photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
+        Room theRoom = roomService.updateRoom(roomId, roomType, roomPrice, photoBytes, username, description, status);
+        RoomResponse roomResponse = new RoomResponse(theRoom.getId(), theRoom.getRoomType(),
+                theRoom.getRoomPrice(), theRoom.isBooked(), photoBytes,
+                null, theRoom.getCreatedBy(), theRoom.getUpdatedBy(), theRoom.getDescription(), theRoom.getStatus());
+        return ResponseEntity.ok(roomResponse);
+    }
+
 
     @GetMapping("/room/types")
     public List<String> getRoomTypes() {
@@ -77,22 +122,22 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/update/{roomId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId,
-                                                   @RequestParam(required = false)  String roomType,
-                                                   @RequestParam(required = false) BigDecimal roomPrice,
-                                                   @RequestParam(required = false) MultipartFile photo) throws SQLException, IOException {
-        byte[] photoBytes = photo != null && !photo.isEmpty() ?
-                photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
-        Blob photoBlob = photoBytes != null && photoBytes.length >0 ? new SerialBlob(photoBytes): null;
-        Room theRoom = roomService.updateRoom(roomId, roomType, roomPrice, photoBytes);
-        theRoom.setPhoto(photoBlob);
-        theRoom.setRoomType(roomType);
-        theRoom.setRoomPrice(roomPrice);
-        RoomResponse roomResponse = getRoomResponse(theRoom);
-        return ResponseEntity.ok(roomResponse);
-    }
+//    @PutMapping("/update/{roomId}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId,
+//                                                   @RequestParam(required = false)  String roomType,
+//                                                   @RequestParam(required = false) BigDecimal roomPrice,
+//                                                   @RequestParam(required = false) MultipartFile photo) throws SQLException, IOException {
+//        byte[] photoBytes = photo != null && !photo.isEmpty() ?
+//                photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
+//        Blob photoBlob = photoBytes != null && photoBytes.length >0 ? new SerialBlob(photoBytes): null;
+//        Room theRoom = roomService.updateRoom(roomId, roomType, roomPrice, photoBytes);
+//        theRoom.setPhoto(photoBlob);
+//        theRoom.setRoomType(roomType);
+//        theRoom.setRoomPrice(roomPrice);
+//        RoomResponse roomResponse = getRoomResponse(theRoom);
+//        return ResponseEntity.ok(roomResponse);
+//    }
 
     @GetMapping("/room/{roomId}")
     public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Long roomId){
@@ -144,7 +189,8 @@ public class RoomController {
         }
         return new RoomResponse(room.getId(),
                 room.getRoomType(), room.getRoomPrice(),
-                room.isBooked(), photoBytes, bookingInfo);
+                room.isBooked(), photoBytes, bookingInfo, room.getCreatedBy(),
+                room.getUpdatedBy(), room.getDescription(), room.getStatus());
     }
 
     private List<BookedRoom> getAllBookingsByRoomId(Long roomId) {

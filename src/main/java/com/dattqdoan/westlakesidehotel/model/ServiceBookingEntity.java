@@ -52,4 +52,9 @@ public class ServiceBookingEntity {
 
     @OneToMany(mappedBy = "serviceBooking")
     private List<PaymentEntity> payments;
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

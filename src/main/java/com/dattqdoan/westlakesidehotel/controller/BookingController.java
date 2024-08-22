@@ -61,6 +61,8 @@ public class BookingController {
                     "Room booked successfully, your booking confirmation code is:" +confirmationCode);
         } catch (InvalidBookingRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @GetMapping("/user/{email}/bookings")

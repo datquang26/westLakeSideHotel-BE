@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -36,19 +37,41 @@ public class BookingService {
     }
 
     public String saveBooking(Long roomId, BookedRoom bookingRequest) {
-        if (bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())){
+        if (bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())) {
             throw new InvalidBookingRequestException("Check-in date must come before check-out date");
         }
-        Room room = roomService.getRoomById(roomId).get();
+
+        Room room = roomService.getRoomById(roomId).orElseThrow(() ->
+                new ResourceNotFoundException("Room not found with id: " + roomId));
+
+        // Tính toán tổng số tiền thanh toán
+        Float totalPrice = calculatePaymentAmount(bookingRequest, room);
+
+        bookingRequest.setTotalPrice(totalPrice);
+
+
         List<BookedRoom> existingBookings = room.getBookings();
-        boolean roomIsAvailable = roomIsAvailable(bookingRequest,existingBookings);
-        if (roomIsAvailable){
+        boolean roomIsAvailable = roomIsAvailable(bookingRequest, existingBookings);
+
+        if (roomIsAvailable) {
+            bookingRequest.setDescription(bookingRequest.getDescription());
             room.addBooking(bookingRequest);
             bookingRepository.save(bookingRequest);
-        }else{
+        } else {
             throw new InvalidBookingRequestException("Sorry, This room is not available for the selected dates;");
         }
+
         return bookingRequest.getBookingConfirmationCode();
+    }
+    public Float calculatePaymentAmount(BookedRoom bookingRequest, Room room) {
+        // Tính số ngày giữa check-in và check-out
+        long diffInDays = bookingRequest.getCheckOutDate().toEpochDay() - bookingRequest.getCheckInDate().toEpochDay();
+
+        // Tính toán tổng số tiền và chuyển đổi về kiểu Float
+        BigDecimal days = BigDecimal.valueOf(diffInDays);
+        BigDecimal totalPrice = room.getRoomPrice().multiply(days);
+
+        return totalPrice.floatValue(); // Chuyển đổi về Float
     }
 
     public BookedRoom findByBookingConfirmationCode(String confirmationCode) {

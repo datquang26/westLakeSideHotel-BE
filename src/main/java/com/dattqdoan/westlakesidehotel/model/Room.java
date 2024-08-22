@@ -38,7 +38,6 @@ public class Room {
     @Column(name= "status")
     private String status;
 
-
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -50,6 +49,11 @@ public class Room {
 
     @Column(name = "updated_by", length = 40)
     private String updatedBy;
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public Room() {
         this.bookings = new ArrayList<>();

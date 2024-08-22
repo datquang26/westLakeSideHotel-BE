@@ -53,4 +53,9 @@ public class PaymentEntity {
         @OneToMany(mappedBy = "payment")
         private List<TransactionLogEntity> transactionLogs;
 
+        @PreUpdate
+        protected void onUpdate() {
+                updatedAt = LocalDateTime.now();
+        }
+
 }

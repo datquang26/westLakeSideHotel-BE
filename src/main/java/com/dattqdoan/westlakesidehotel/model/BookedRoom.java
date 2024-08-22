@@ -72,6 +72,11 @@ public class BookedRoom {
     @OneToMany(mappedBy = "bookedRoom")
     private List<PaymentEntity> payments;
 
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public void calculateTotalNumberGuest() {
         this.totalNumOfGuest = this.NumOfAdults + NumOfChildren;
     }
@@ -84,6 +89,13 @@ public class BookedRoom {
     public void setNumOfChildren(int numOfChildren) {
         NumOfChildren = numOfChildren;
         calculateTotalNumberGuest();
+    }
+    public Float getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Float totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public void setBookingConfirmationCode(String bookingConfirmationCode) {
